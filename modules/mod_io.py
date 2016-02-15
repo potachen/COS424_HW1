@@ -30,9 +30,15 @@ if __name__ == '__main__':
     ### --- Paths for Different Systems --- ###
     mbp_path = '/Users/po-tachen'
     ubu_path = '/home/potachen'
-    path = mbp_path if platform.system() == 'Darwin' else ubu_path
-
-    data_path = path + '/Dropbox/Princeton/Courses/' \
+    hmbp = '/Users/hugh/Google Drive/Hugh/PhD/princeton/COS424/assignments/1/data/voxResources/data'
+    if platform.node() == 'nat-oitwireless-inside-vapornet100-d-1862.Princeton.EDU':
+        data_path = hmbp
+    else:
+        if platform.system() == 'Darwin':
+            path = mbp_path
+        else:
+            path = ubu_path
+        data_path = path + '/Dropbox/Princeton/Courses/' \
                        'COS 424 Fundamentals of Machine Learning/' \
                        'HW1/voxResources-master/data'
 
