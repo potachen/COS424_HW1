@@ -1,7 +1,11 @@
-#!/user/local/bin/python
+#!/usr/local/bin/python
 
 import scipy.io
 import platform
+
+
+def read_mat(folder_path):
+    pass
 
 
 def main(data_path):
