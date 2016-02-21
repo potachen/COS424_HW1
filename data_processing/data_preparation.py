@@ -39,7 +39,6 @@ def get_data():
             # training_feature_array = np.concatenate((training_feature_array, features))
             # training_class_array = np.concatenate((training_class_array, classes))
 
-
     # print data_training_matrix
     # print class_training_vector
     # print training_feature_array
