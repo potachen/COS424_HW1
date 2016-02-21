@@ -15,22 +15,23 @@ def get_file_paths(data_path):
 
 def test(data_path):
 
-    blues_00000 = scipy.io.loadmat(data_path + '/blues/blues.00000.mat')
+    # song = scipy.io.loadmat(data_path + '/blues/blues.00000.mat')
+    song = scipy.io.loadmat(data_path + '/classical/classical.00045.mat')
 
-    a = blues_00000['DAT'].dtype.names
+    a = song['DAT'].dtype.names
     print a
-    print type(a)
+    # print type(a)
 
-    b = blues_00000['DAT']['file_name'][0, 0][0]
+    b = song['DAT']['file_name'][0, 0][0]
     print b
-    print type(b)
+    # print type(b)
 
-    c = blues_00000['DAT']['mfc'][0, 0][0]
+    c = song['DAT']['mfc'][0, 0]
     print c
+    print c.shape
     print type(c)
-    print c.__len__()
 
-    d = blues_00000['DAT']['class'][0, 0][0]
+    d = song['DAT']['class_name'][0, 0]
     print 'class is'
     print d
     print type(d)
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     # a = read_mat(data_path + '/blues/blues.00000.mat')
     # print dp.get_feature(a, 'mfc')
 
-    print get_file_paths(data_path)
+    # print get_file_paths(data_path)
     # print get_file_paths(data_path)[1]
     # print get_file_paths(data_path)[1].__len__()
     # print get_file_paths(data_path)[1][-1].__len__()
