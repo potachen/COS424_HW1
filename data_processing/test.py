@@ -2,15 +2,6 @@
 
 from data_processing import data_path
 import scipy.io
-import os
-
-
-def read_mat(file_path):
-    return scipy.io.loadmat(file_path)
-
-
-def get_file_paths(data_path):
-    return [[fp[0], fp[2]]for fp in os.walk(data_path)][1:]
 
 
 def test(data_path):
