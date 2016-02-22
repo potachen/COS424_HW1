@@ -11,6 +11,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
 import catch_errors as cer
 import simple_validate as sv
 
@@ -56,6 +58,26 @@ def NearestNeighbors(Xtrn,Ytrn,Xvl_tst,Yvl_tst):
     Y_pred = NNs.predict(Xvl_tst)
     return(sv.validate(Y_pred,Yvl_tst))
 
+def RandomForrest(Xtrn,Ytrn,Xvl_tst,Yvl_tst):
+    '''Trains a Random Forrest classifier on Xtrn and Ytrn;
+    applies it to Xvl_tst and compares the results to Yvl_tst using
+    validate().'''
+    cer.catch_input_error(Xtrn,Ytrn,Xvl_tst,Yvl_tst)
+    RandF = RandomForestClassifier(n_estimators = 10)
+    RandF.fit(Xtrn, Ytrn)
+    Y_pred = RandF.predict(Xvl_tst)
+    return(sv.validate(Y_pred,Yvl_tst))
+
+def AdaBoost(Xtrn,Ytrn,Xvl_tst,Yvl_tst):
+    '''Trains an Ada Boost classifier on Xtrn and Ytrn;
+    applies it to Xvl_tst and compares the results to Yvl_tst using
+    validate().'''
+    cer.catch_input_error(Xtrn,Ytrn,Xvl_tst,Yvl_tst)
+    AdaB = AdaBoostClassifier(n_estimators = 100)
+    AdaB.fit(Xtrn, Ytrn)
+    Y_pred = AdaB.predict(Xvl_tst)
+    return(sv.validate(Y_pred,Yvl_tst))
+
 if __name__ == '__main__':
     # some test things
     iris = datasets.load_iris()
@@ -67,4 +89,8 @@ if __name__ == '__main__':
           str(DecisionTree(iris.data,iris.target,iris.data,iris.target)))
     print("Nearest Neighbors: " + \
           str(NearestNeighbors(iris.data,iris.target,iris.data,iris.target)))
+    print("Random Forrest: " + \
+          str(RandomForrest(iris.data,iris.target,iris.data,iris.target)))
+    print("Ada Boost: " + \
+          str(AdaBoost(iris.data,iris.target,iris.data,iris.target)))
 
