@@ -15,7 +15,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
 import catch_errors as cer
 import simple_test as sv
-from ..data_processing import data_preparation as datpro
+import data_processing.data_preparation as datpro
 
 # Define the classifier functions
 def gaussNB(Xtrn,Ytrn,Xvl_tst,Yvl_tst):
@@ -82,19 +82,19 @@ if __name__ == '__main__':
     # some test things
     [feat_train,label_train,feat_val,label_val,feat_test,label_test] = \
         datpro.get_data([0.8, 0.1, 0.1])
-    arg_list = [feat_train,label_train,feat_test,label_test]
-    print("Gaussian Naive Bayes: " + \
-          str(gaussNB(*arg_list)))
-    print("Quadratic Discriminant Analysis: " + \
-          str(QuadDiscAnal(*arg_list)))
-    print("Decision Tree: " + \
-          str(DecisionTree(*arg_list)))
-    print("Nearest Neighbors: " + \
-          str(NearestNeighbors(*arg_list)))
-    print("Random Forrest: " + \
-          str(RandomForrest(*arg_list)))
-    print("Ada Boost: " + \
-          str(AdaBoost(*arg_list)))
+    # arg_list = [feat_train,label_train,feat_test,label_test]
+    # print("Gaussian Naive Bayes: " + \
+    #       str(gaussNB(*arg_list)))
+    # print("Quadratic Discriminant Analysis: " + \
+    #       str(QuadDiscAnal(*arg_list)))
+    # print("Decision Tree: " + \
+    #       str(DecisionTree(*arg_list)))
+    # print("Nearest Neighbors: " + \
+    #       str(NearestNeighbors(*arg_list)))
+    # print("Random Forrest: " + \
+    #       str(RandomForrest(*arg_list)))
+    # print("Ada Boost: " + \
+    #       str(AdaBoost(*arg_list)))
 
 
 
