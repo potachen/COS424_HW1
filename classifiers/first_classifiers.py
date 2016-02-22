@@ -80,8 +80,9 @@ def AdaBoost(Xtrn,Ytrn,Xvl_tst,Yvl_tst):
 
 if __name__ == '__main__':
     # some test things
-    [feat_train,label_train,feat_val,label_val,feat_test,label_test] = \
-        datpro.get_data([0.8, 0.1, 0.1])
+    feat_train, label_train, feat_val, label_val, feat_test, label_test = \
+        datpro.get_data([0.8, 0.1, 0.1], feature='zerocross')
+    print feat_train
     # arg_list = [feat_train,label_train,feat_test,label_test]
     # print("Gaussian Naive Bayes: " + \
     #       str(gaussNB(*arg_list)))

@@ -25,27 +25,41 @@ def get_feature_class_from_mat(mat_struct, feature='zerocross'):
     return mat_struct['DAT'][feature][0, 0][0], mat_struct['DAT']['class'][0, 0][0]
 
 
-def get_feature_class_matrix(data_range_list, path, file_name_list, feature_matrix, class_vector, feature):
+def get_feature_class_matrix(data_range_list, path, file_name_list, feature):
 
-    data_len = (data_range_list[1] - data_range_list[0])
+    feat_mat = np.array([])
+    label_vec = np.array([])
 
     for j in range(data_range_list[0], data_range_list[1]):
-        features, classes = get_feature_class_from_mat(read_mat(path + file_name_list[j % data_len]),
-                                                       feature=feature)
-
+        features, labels = get_feature_class_from_mat(read_mat(path + file_name_list[j]),
+                                                      feature=feature)
+        # print features.shape
         ### Truncating or increasing feature size to make it equals to 1198
         if features.shape[0] < 1198:
             for d in range(1198 - features.shape[0]):
                 features = np.concatenate((features, np.array([0])))
+        elif features.shape[0] > 1198:
+            features = features[:1198]
 
-        # for k in range(1198):
-        #     feature_matrix[j, k] = features[k]
-        #     class_vector[j] = classes
-        if feature_matrix.size == 0:
-            feature_matrix = feature_matrix
+        # print feat_mat.shape, features.shape
+
+        if feat_mat.size == 0:
+            feat_mat = features
         else:
-            feature_matrix = np.vstack((feature_matrix, features))
-        class_vector = np.concatenate((class_vector, classes))
+            feat_mat = np.vstack((feat_mat, features))
+
+        label_vec = np.concatenate((label_vec, labels))
+
+    return feat_mat, label_vec
+
+
+def update_mat_vec(old_mat, old_vec, new_mat, new_vec):
+    if old_mat.size == 0:
+        old_mat = new_mat
+    else:
+        old_mat = np.vstack((old_mat, new_mat))
+    old_vec = np.concatenate((old_vec, new_vec))
+    return old_mat, old_vec
 
 
 @dp_tl.timing_decorator
@@ -79,16 +93,19 @@ def get_data(ratio, feature='zerocross'):
         testing_len = int(math.ceil(file_name_list.__len__() * ratio[2]))
 
         ### --- Main part for getting features and classes from .mat files --- ###
-        get_feature_class_matrix([0 + class_ind * training_len, training_len * (1 + class_ind)],
-                                 path, file_name_list, feat_train_mat, label_train_vec, feature)
-        get_feature_class_matrix([0 + class_ind * validating_len, validating_len * (1 + class_ind)],
-                                 path, file_name_list, feat_val_mat, label_val_vec, feature)
-        get_feature_class_matrix([0 + class_ind * testing_len, testing_len * (1 + class_ind)],
-                                 path, file_name_list, feat_test_mat, label_test_vec, feature)
+        tra_mat, tra_vec = get_feature_class_matrix([0, training_len],
+                                                    path, file_name_list, feature)
+        val_mat, val_vec = get_feature_class_matrix([training_len, training_len + validating_len],
+                                                    path, file_name_list, feature)
+        tes_mat, tes_vec = get_feature_class_matrix([training_len + validating_len, training_len + validating_len + testing_len],
+                                                    path, file_name_list, feature)
 
-    return feat_train_mat, label_train_vec, \
-           feat_val_mat, label_val_vec, \
-           feat_test_mat, label_test_vec
+        ### Updating all the matrices and vectors
+        feat_train_mat, label_train_vec = update_mat_vec(feat_train_mat, label_train_vec, tra_mat, tra_vec)
+        feat_val_mat, label_val_vec = update_mat_vec(feat_val_mat, label_val_vec, val_mat, val_vec)
+        feat_test_mat, label_test_vec = update_mat_vec(feat_test_mat, label_test_vec, tes_mat, tes_vec)
+
+    return feat_train_mat, label_train_vec, feat_val_mat, label_val_vec, feat_test_mat, label_test_vec
 
 
 if __name__ == '__main__':
