@@ -22,7 +22,8 @@ def get_file_paths(data_path):
 
 
 def get_feature_class_from_mat(mat_struct, feature='zerocross'):
-    return mat_struct['DAT'][feature][0, 0][0], mat_struct['DAT']['class'][0, 0][0]
+    # return mat_struct['DAT'][feature][0, 0][0], mat_struct['DAT']['class'][0, 0][0]
+    return mat_struct['DAT'][feature][0, 0], mat_struct['DAT']['class'][0, 0][0]
 
 
 def get_feature_class_matrix(data_range_list, path, file_name_list, feature):
@@ -34,19 +35,25 @@ def get_feature_class_matrix(data_range_list, path, file_name_list, feature):
         features, labels = get_feature_class_from_mat(read_mat(path + file_name_list[j]),
                                                       feature=feature)
         # print features.shape
-        ### Truncating or increasing feature size to make it equals to 1198
-        if features.shape[0] < 1198:
-            for d in range(1198 - features.shape[0]):
-                features = np.concatenate((features, np.array([0])))
-        elif features.shape[0] > 1198:
-            features = features[:1198]
 
-        # print feat_mat.shape, features.shape
+        single_descrip = np.array([])
+        for x in range(features.shape[0]):
+            temp = None
+            ### Truncating or increasing feature size to make it equals to 1198
+            if features.shape[1] < 1198:
+                temp = np.concatenate((features[x],
+                                       np.zeros(shape=(1198 - features.shape[1],))))
+            elif features.shape[1] > 1198:
+                temp = features[x, :1198]
+            else:
+                temp = features[x]
+
+            single_descrip = np.concatenate((single_descrip, temp))
 
         if feat_mat.size == 0:
-            feat_mat = features
+            feat_mat = single_descrip
         else:
-            feat_mat = np.vstack((feat_mat, features))
+            feat_mat = np.vstack((feat_mat, single_descrip))
 
         label_vec = np.concatenate((label_vec, labels))
 
@@ -62,7 +69,7 @@ def update_mat_vec(old_mat, old_vec, new_mat, new_vec):
     return old_mat, old_vec
 
 
-@dp_tl.timing_decorator
+# @dp_tl.timing_decorator
 def get_data(ratio, feature='zerocross'):
 
     ### Getting all the class folders one level under data folder
@@ -109,5 +116,9 @@ def get_data(ratio, feature='zerocross'):
 
 
 if __name__ == '__main__':
-    get_data([0.8, 0.1, 0.1])
+
+    get_data = dp_tl.timing_decorator(get_data)
+    data = get_data([0.8, 0.1, 0.1], feature='mfc')
+    # data = get_data([0.8, 0.1, 0.1], feature='zerocross')
+    print data[0].shape
     # get_data([0.5, 0.3, 0.2])

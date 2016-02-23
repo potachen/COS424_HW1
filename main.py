@@ -7,7 +7,9 @@ import data_processing.tools as dp_tl
 
 
 def all_classifiers(data):
-
+    """
+    Calling all the classifiers at once with the same dataset.
+    """
     return cfs.gaussNB(*data[0:4]), \
            cfs.QuadDiscAnal(*data[0:4]), \
            cfs.DecisionTree(*data[0:4]), \
