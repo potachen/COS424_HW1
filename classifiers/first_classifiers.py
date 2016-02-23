@@ -94,7 +94,7 @@ def AdaBoost(Xcvfit,Ycvfit):
 
 if __name__ == '__main__':
     pass
-    # some test things
+# some test things
 #    feat_train, label_train, feat_val, label_val, feat_test, label_test = \
 #        datprep.get_data([0.8, 0.1, 0.1], feature='zerocross')
 #    arg_list = [feat_train,label_train,feat_test,label_test]
