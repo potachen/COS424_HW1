@@ -1,10 +1,32 @@
 #!/usr/bin/local/python
 
 
-def main():
-    pass
+import classifiers.first_classifiers as cfs
+import data_processing.data_preparation as dp
+import data_processing.tools as dp_tl
+
+
+def all_classifiers(data):
+    """
+    Calling all the classifiers at once with the same dataset.
+    """
+    return cfs.gaussNB(*data[0:4]), \
+           cfs.QuadDiscAnal(*data[0:4]), \
+           cfs.DecisionTree(*data[0:4]), \
+           cfs.NearestNeighbors(*data[0:4]), \
+           cfs.RandomForrest(*data[0:4]), \
+           cfs.AdaBoost(*data[0:4])
+
+
+@dp_tl.timing_decorator
+def main(loop):
+
+    for l in range(loop):
+        data = dp.get_data([0.8, 0.1, 0.1], feature='zerocross')
+        scores = all_classifiers(data)
+
+        print scores
 
 
 if __name__ == '__main__':
-    main()
-
+    main(loop=3)
