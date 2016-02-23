@@ -23,6 +23,7 @@ def plot_bar(datamat,row_labels,xlabel,ylabel):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.xticks(index+width/2,row_labels)
+    plt.show()
     return plt
 
 def heatmap(datamat,labels):
@@ -33,12 +34,13 @@ def heatmap(datamat,labels):
     plt.pcolor(datamat)
     plt.xticks(np.arange(datamat.shape[0])+0.5, labels)
     plt.yticks(np.arange(datamat.shape[1])+0.5, labels)
+    plt.colorbar()
     return plt
 
 
 if __name__ == '__main__':
-#    a = np.array([[1,2,3,4],[2,4,6,8],[3,6,9,12]])
-#    plot_bar(a,['A','B','C'],'classifiers','cv score')
-    b = np.array([[1,2,3],[2,3,4],[3,4,5]])
-    labels = ['A','B','C']
-    heatmap(b,labels)
+    a = np.array([[1,2,3,4],[2,4,6,8],[3,6,9,12]])
+    plot_bar(a,['A','B','C'],'classifiers','cv score')
+#    b = np.array([[1,2,3],[2,3,4],[3,4,5]])
+#    labels = ['A','B','C']
+#    heatmap(b,labels)
