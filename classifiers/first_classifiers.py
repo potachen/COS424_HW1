@@ -26,7 +26,8 @@ def gaussNB(Xcvfit,Ycvfit):
     cer.catch_input_error(Xcvfit,Ycvfit)
     clf = GaussianNB()
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
@@ -37,7 +38,8 @@ def QuadDiscAnal(Xcvfit,Ycvfit):
     cer.catch_input_error(Xcvfit,Ycvfit)
     clf = QuadraticDiscriminantAnalysis()
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
@@ -48,7 +50,8 @@ def DecisionTree(Xcvfit,Ycvfit):
     cer.catch_input_error(Xcvfit,Ycvfit)
     clf = tree.DecisionTreeClassifier()
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
@@ -60,7 +63,8 @@ def NearestNeighbors(Xcvfit,Ycvfit):
     clf = KNeighborsClassifier(n_neighbors=3, algorithm='auto', \
                                weights = 'uniform')
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
@@ -71,7 +75,8 @@ def RandomForrest(Xcvfit,Ycvfit):
     cer.catch_input_error(Xcvfit,Ycvfit)
     clf = RandomForestClassifier(n_estimators = 10)
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
@@ -82,7 +87,8 @@ def AdaBoost(Xcvfit,Ycvfit):
     cer.catch_input_error(Xcvfit,Ycvfit)
     clf = AdaBoostClassifier(n_estimators = 100)
     scores = cross_validation.cross_val_score(clf, Xcvfit, \
-                                              Ycvfit, cv=5)
+                                              Ycvfit, cv=5, \
+                                              scoring='accuracy')
     clf.fit(Xcvfit,Ycvfit)
     return(scores,clf)
 
