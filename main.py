@@ -6,6 +6,7 @@ import data_processing.data_preparation as dp
 import data_processing.tools as dp_tl
 import numpy as np
 from sklearn.feature_selection import VarianceThreshold
+import testing.evaluate as ev
 
 
 def all_classifiers(Xcv, Ycv):
@@ -21,6 +22,9 @@ def all_classifiers(Xcv, Ycv):
 
 
 def best_clf_selector(scores_clfs):
+    """
+    This function selects the clf with best performance based on averaged cross-validation scores.
+    """
 
     ave_scores_list = []
 
@@ -30,26 +34,36 @@ def best_clf_selector(scores_clfs):
     return max(ave_scores_list, key=lambda x: x[0])
 
 
-def feat_selec(data, thred=0.8):
+def feat_selec(tra_val_data, testing_data, thred=0.8):
+
+    num_tv = tra_val_data.shape[0]
+
+    total_data = np.vstack((tra_val_data, testing_data))
+
     selec = VarianceThreshold(threshold=thred)
-    return selec.fit_transform(data)
+    total_selected_data = selec.fit_transform(total_data)
+
+    return total_selected_data[:num_tv, :], total_selected_data[num_tv:, :]
 
 
 @dp_tl.timing_decorator
 def main():
 
-    data = dp.get_data([0.8, 0.2],
-                       feature_list=['chroma', 'eng', 't', 'brightness', 'zerocross', 'roughness', 'hcdf'])
+    tra_val_data, tra_val_label, testing_data, testing_label = \
+        dp.get_data([0.8, 0.2],
+                    feature_list=['chroma', 'eng', 't', 'brightness', 'zerocross', 'roughness', 'hcdf'])
+                       # feature_list=['chroma', 'eng', 't', 'brightness'])
 
-    data_selected = feat_selec(data[0], thred=0.8)
-    data_selected2 = feat_selec(data_selected, thred=0.8)
+    tra_val_selected, testing_selected = feat_selec(tra_val_data, testing_data, thred=0.8)
 
-    print 'Before selection', data[0].shape
-    print 'After selection', data_selected.shape
+    scores_clfs = all_classifiers(tra_val_selected, tra_val_label)
 
-    scores_clfs = all_classifiers(data_selected2, data[1])
+    best_sco, best_clf = best_clf_selector(scores_clfs)
 
-    print best_clf_selector(scores_clfs)
+    acc_sco, con_mat = ev.evaluate_performance(best_clf, testing_selected, testing_label)
+
+    print acc_sco
+    print con_mat
 
 
 if __name__ == '__main__':
