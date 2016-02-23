@@ -4,29 +4,53 @@
 import classifiers.first_classifiers as cfs
 import data_processing.data_preparation as dp
 import data_processing.tools as dp_tl
+import numpy as np
+from sklearn.feature_selection import VarianceThreshold
 
 
-def all_classifiers(data):
+def all_classifiers(Xcv, Ycv):
     """
     Calling all the classifiers at once with the same dataset.
     """
-    return cfs.gaussNB(*data[0:4]), \
-           cfs.QuadDiscAnal(*data[0:4]), \
-           cfs.DecisionTree(*data[0:4]), \
-           cfs.NearestNeighbors(*data[0:4]), \
-           cfs.RandomForrest(*data[0:4]), \
-           cfs.AdaBoost(*data[0:4])
+    return cfs.gaussNB(Xcv, Ycv), \
+           cfs.QuadDiscAnal(Xcv, Ycv), \
+           cfs.DecisionTree(Xcv, Ycv), \
+           cfs.NearestNeighbors(Xcv, Ycv), \
+           cfs.RandomForrest(Xcv, Ycv), \
+           cfs.AdaBoost(Xcv, Ycv)
+
+
+def best_clf_selector(scores_clfs):
+
+    ave_scores_list = []
+
+    for scores_clf in scores_clfs:
+        ave_scores_list.append([np.mean(scores_clf[0]), scores_clf[1]])
+
+    return max(ave_scores_list, key=lambda x: x[0])
+
+
+def feat_selec(data, thred=0.8):
+    selec = VarianceThreshold(threshold=thred)
+    return selec.fit_transform(data)
 
 
 @dp_tl.timing_decorator
-def main(loop):
+def main():
 
-    for l in range(loop):
-        data = dp.get_data([0.8, 0.1, 0.1], feature='zerocross')
-        scores = all_classifiers(data)
+    data = dp.get_data([0.8, 0.2],
+                       feature_list=['chroma', 'eng', 't', 'brightness', 'zerocross', 'roughness', 'hcdf'])
 
-        print scores
+    data_selected = feat_selec(data[0], thred=0.8)
+    data_selected2 = feat_selec(data_selected, thred=0.8)
+
+    print 'Before selection', data[0].shape
+    print 'After selection', data_selected.shape
+
+    scores_clfs = all_classifiers(data_selected2, data[1])
+
+    print best_clf_selector(scores_clfs)
 
 
 if __name__ == '__main__':
-    main(loop=3)
+    main()

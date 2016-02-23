@@ -69,17 +69,25 @@ def update_mat_vec(old_mat, old_vec, new_mat, new_vec):
     return old_mat, old_vec
 
 
+def add_features(old_mat, new_mat):
+    if old_mat.size == 0:
+        old_mat = new_mat
+    else:
+        old_mat = np.concatenate((old_mat, new_mat), axis=1)
+    return old_mat
+
+
 # @dp_tl.timing_decorator
-def get_data(ratio, feature='zerocross'):
+def get_data(ratio, feature_list=['zerocross']):
 
     ### Getting all the class folders one level under data folder
     class_file_list = get_file_paths(data_path)
 
     ### Initialing all the data containers, including feature matrix and class vector
-    feat_train_mat = np.array([])
-    label_train_vec = np.array([])
-    feat_val_mat = np.array([])
-    label_val_vec = np.array([])
+    feat_tra_val_mat = np.array([])
+    label_tra_val_vec = np.array([])
+    # feat_val_mat = np.array([])
+    # label_val_vec = np.array([])
     feat_test_mat = np.array([])
     label_test_vec = np.array([])
 
@@ -94,31 +102,45 @@ def get_data(ratio, feature='zerocross'):
         ### training data, validating data and testing data
         random.shuffle(file_name_list)
 
-        ### Finding out the length of each dataset in a class
-        training_len = int(math.ceil(file_name_list.__len__() * ratio[0]))
-        validating_len = int(math.ceil(file_name_list.__len__() * ratio[1]))
-        testing_len = int(math.ceil(file_name_list.__len__() * ratio[2]))
+        ### Initialize extensible feature matrix
+        tra_val_mat_ex = np.array([])
+        test_mat_ex = np.array([])
 
-        ### --- Main part for getting features and classes from .mat files --- ###
-        tra_mat, tra_vec = get_feature_class_matrix([0, training_len],
-                                                    path, file_name_list, feature)
-        val_mat, val_vec = get_feature_class_matrix([training_len, training_len + validating_len],
-                                                    path, file_name_list, feature)
-        tes_mat, tes_vec = get_feature_class_matrix([training_len + validating_len, training_len + validating_len + testing_len],
-                                                    path, file_name_list, feature)
+        for feature in feature_list:
+            ### Finding out the length of each dataset in a class
+            tra_val_len = int(math.ceil(len(file_name_list) * ratio[0]))
+            # validating_len = int(math.ceil(file_name_list.__len__() * ratio[1]))
+            testing_len = int(math.ceil(len(file_name_list) * ratio[1]))
+
+            ### --- Main part for getting features and classes from .mat files --- ###
+            tra_val_mat, tra_val_vec = get_feature_class_matrix([0, tra_val_len],
+                                                                path, file_name_list, feature)
+            # val_mat, val_vec = get_feature_class_matrix([tra_val_len, tra_val_len + validating_len],
+            #                                             path, file_name_list, feature)
+            tes_mat, tes_vec = get_feature_class_matrix([tra_val_len, tra_val_len + testing_len],
+                                                        path, file_name_list, feature)
+
+            ### Add different feature together
+            tra_val_mat_ex = add_features(tra_val_mat_ex, tra_val_mat)
+            test_mat_ex = add_features(test_mat_ex, tes_mat)
 
         ### Updating all the matrices and vectors
-        feat_train_mat, label_train_vec = update_mat_vec(feat_train_mat, label_train_vec, tra_mat, tra_vec)
-        feat_val_mat, label_val_vec = update_mat_vec(feat_val_mat, label_val_vec, val_mat, val_vec)
-        feat_test_mat, label_test_vec = update_mat_vec(feat_test_mat, label_test_vec, tes_mat, tes_vec)
+        feat_tra_val_mat, label_tra_val_vec = update_mat_vec(feat_tra_val_mat, label_tra_val_vec, tra_val_mat_ex, tra_val_vec)
+        # feat_val_mat, label_val_vec = update_mat_vec(feat_val_mat, label_val_vec, val_mat, val_vec)
+        feat_test_mat, label_test_vec = update_mat_vec(feat_test_mat, label_test_vec, test_mat_ex, tes_vec)
 
-    return feat_train_mat, label_train_vec, feat_val_mat, label_val_vec, feat_test_mat, label_test_vec
+    # return feat_tra_val_mat, label_tra_val_vec, feat_val_mat, label_val_vec, feat_test_mat, label_test_vec
+    return feat_tra_val_mat, label_tra_val_vec, feat_test_mat, label_test_vec
 
 
 if __name__ == '__main__':
 
     get_data = dp_tl.timing_decorator(get_data)
-    data = get_data([0.8, 0.1, 0.1], feature='mfc')
+    # data = get_data([0.8, 0.1, 0.1], feature='mfc')
+    data = get_data([0.1, 0.1], feature_list=['mfc', 'brightness', 'zerocross'])
     # data = get_data([0.8, 0.1, 0.1], feature='zerocross')
     print data[0].shape
+    print data[1].shape
+    print data[2].shape
+    print data[3].shape
     # get_data([0.5, 0.3, 0.2])
