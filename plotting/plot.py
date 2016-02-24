@@ -8,16 +8,18 @@ and a heatmap from a matrix
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_bar(datamat,row_labels,xlabel,ylabel):
+def plot_bar(datamat,row_labels,xlabel,ylabel, num=1):
     '''Plots a bar chart from a data matrix in which the number
     of rows is the number of bars and the number of columns gives
     the number of data points corresponding to each bar.'''
-    N = datamat.shape[0]
+    N = len(datamat)
     index = np.arange(N)
     width = 0.9
     means = np.mean(datamat,axis=1)
+    print means
     stds = np.std(datamat,axis=1)
     plt.style.use('ggplot')
+    plt.figure(num=num,figsize=(10, 8))
     plt.subplot(111)
     plt.bar(index, means, width, yerr=stds)
     plt.xlabel(xlabel)
@@ -26,15 +28,19 @@ def plot_bar(datamat,row_labels,xlabel,ylabel):
     plt.show()
     return plt
 
-def heatmap(datamat,labels):
+def heatmap(datamat,labels, num=2):
     '''Plots a heatmap of a square matrix and labels the
     rows and columns with the same vector of strings'''
     plt.style.use('ggplot')
+    plt.figure(num=num,figsize=(10, 8))
     plt.subplot(111)
     plt.pcolor(datamat)
     plt.xticks(np.arange(datamat.shape[0])+0.5, labels)
     plt.yticks(np.arange(datamat.shape[1])+0.5, labels)
     plt.colorbar()
+    ax = plt.gca()
+    ax.invert_yaxis()
+    ax.xaxis.set_label_position('top')
     return plt
 
 
