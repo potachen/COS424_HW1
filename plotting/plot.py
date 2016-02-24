@@ -25,7 +25,6 @@ def plot_bar(datamat,row_labels,xlabel,ylabel, num=1):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.xticks(index+width/2,row_labels)
-    plt.show()
     return plt
 
 def heatmap(datamat,labels, num=2):
@@ -40,7 +39,7 @@ def heatmap(datamat,labels, num=2):
     plt.colorbar()
     ax = plt.gca()
     ax.invert_yaxis()
-    ax.xaxis.set_label_position('top')
+    ax.xaxis.tick_top()
     return plt
 
 

@@ -32,8 +32,6 @@ def best_clf_selector(scores_clfs):
     for scores_clf in scores_clfs:
         ave_scores_list.append([np.mean(scores_clf[0]), scores_clf[1]])
 
-    print ave_scores_list
-
     return max(ave_scores_list, key=lambda x: x[0])
 
 
@@ -64,7 +62,6 @@ def main():
 
     ### Running all classifiers and selecting out the one with best performance
     scores_clfs = all_classifiers(tra_val_selected, tra_val_label)
-    print scores_clfs
     best_sco, best_clf = best_clf_selector(scores_clfs)
     val_scores = []
     for sc in scores_clfs:
@@ -80,7 +77,7 @@ def main():
     ### Plotting Section
     plot_fig = pl.plot_bar(val_scores,
                            ['gaussNB', 'QuadDiscAnal', 'DecisionTree', 'NearestNeighbors', 'RandomForrest', 'AdaBoost'],
-                           'Classifiers', 'CV Scores')
+                            'Classifiers', 'CV Scores')
     plot_fig.savefig('plotting/bars.svg', format='svg')
     plot_fig = pl.heatmap(con_mat,
                           ['blue', 'classical', 'country', 'disco', 'hiphop', 'jazz', 'metal', 'pop', 'reggae', 'rock'])
